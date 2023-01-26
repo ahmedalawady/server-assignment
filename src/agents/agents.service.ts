@@ -23,7 +23,7 @@ export class AgentsService {
       password: agent.password,
       user_type: UserType.AGENT,
     });
-    console.log('USER', user);
+
     const agentData = await this.agentRepository.save({
       name: agent.name,
       title: agent.title,

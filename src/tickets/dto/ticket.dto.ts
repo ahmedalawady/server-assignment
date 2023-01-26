@@ -4,7 +4,7 @@ export class TicketDto {
   subject: string;
   description: string;
   customer_id: number;
-  product_id: number;
+  product_id: string;
   ticket_id: number;
   agent?: {
     id: number;

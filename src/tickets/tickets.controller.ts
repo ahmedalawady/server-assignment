@@ -18,8 +18,6 @@ export class TicketsController {
     @Body() createTicketDto: CreateTicketDto,
     @Request() req,
   ): Promise<Ticket> {
-    console.log('USER----------------');
-    console.log(req.user);
     return this.ticketService.create(req.user.userId, createTicketDto);
   }
 
@@ -29,7 +27,7 @@ export class TicketsController {
     //ToDO: check if the ticket belongs to the user
     //TODO check if the ticket is in progress "Should Handle ticket workflow"
     const ticket = await this.ticketService.resolveTicket(body.id);
-    console.log(ticket);
+
     await this.agentsService.markAgentAvailable(ticket.agent_id);
     return true;
   }

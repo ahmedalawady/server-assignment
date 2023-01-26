@@ -17,7 +17,7 @@ export class UsersService {
 
   async create(user: CreateUserDto): Promise<UserDto> {
     const formattedUser = await this.mapperService.toEntity(user);
-    console.log(formattedUser);
+
     const result = await this.userRepository.save(formattedUser);
     return this.mapperService.toDto(result);
   }

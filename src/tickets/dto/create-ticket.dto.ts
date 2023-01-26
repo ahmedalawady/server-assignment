@@ -9,5 +9,5 @@ export class CreateTicketDto {
   description: string;
   @IsString()
   @IsNotEmpty()
-  product_id: number;
+  product_id: string;
 }

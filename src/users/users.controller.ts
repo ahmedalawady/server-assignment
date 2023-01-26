@@ -12,7 +12,6 @@ export class UsersController {
 
   @Post('users/register')
   async register(@Request() req) {
-    console.log('BODY', req.body);
     const { username, password, user_type } = req.body;
     return this.userService.create({ username, password, user_type });
   }

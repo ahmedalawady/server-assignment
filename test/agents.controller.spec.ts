@@ -64,11 +64,13 @@ describe('AgentsController (e2e)', () => {
     });
 
     token = login.body.access_token;
+    console.log('token', token);
   });
 
   it('Create new agent', () => {
     return request(app.getHttpServer())
       .post('/agents/create')
+      .set('Authorization', `Bearer ${token}`)
       .send(agentExample)
       .expect(201)
       .then(async () => {
@@ -80,10 +82,9 @@ describe('AgentsController (e2e)', () => {
         const user = await userRepository.find({
           where: { username: agentExample.username },
         });
-        console.log(user);
+
         expect(user).toBeDefined();
         expect(user[0].user_type).toBe(UserType.AGENT);
-        console.log(user);
       });
   });
 

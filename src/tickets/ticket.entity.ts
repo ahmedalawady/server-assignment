@@ -28,8 +28,8 @@ export class Ticket {
   @Column({ type: 'enum', enum: TicketStatus, default: TicketStatus.OPEN })
   status: TicketStatus;
 
-  @Column({ type: 'int' })
-  product_id: number;
+  @Column()
+  product_id: string;
 
   @CreateDateColumn()
   created_at: Date;

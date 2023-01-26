@@ -45,14 +45,12 @@ export class TicketsService {
   }
 
   async resolveTicket(ticket_id: number) {
-    console.log('ticket_id', ticket_id);
     await this.ticketRepository.update(ticket_id, {
       status: TicketStatus.RESOLVED,
     });
     const ticket = await this.ticketRepository.findOne({
       where: { id: ticket_id },
     });
-    console.log(ticket);
     return ticket;
   }
 }

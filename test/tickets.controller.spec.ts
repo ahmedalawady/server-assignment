@@ -104,7 +104,7 @@ describe.only('TicketsController (e2e)', () => {
       .send({
         subject: 'subject',
         description: 'description',
-        product_id: 1,
+        product_id: 'sl-1',
       })
       .expect(201)
       .then(async (res) => {
@@ -132,7 +132,7 @@ describe.only('TicketsController (e2e)', () => {
       .send({
         subject: 'subject',
         description: 'description',
-        product_id: 1,
+        product_id: 'sl-1',
       })
       .expect(201)
       .then(async (res) => {
