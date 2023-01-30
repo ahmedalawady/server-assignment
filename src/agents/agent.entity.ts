@@ -3,7 +3,9 @@ import {
   Entity,
   CreateDateColumn,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from 'typeorm';
+import { Ticket } from '../tickets/ticket.entity';
 
 @Entity()
 export class Agent {
@@ -24,6 +26,11 @@ export class Agent {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   available_at: Date;
+
+  @OneToMany(() => Ticket, (ticket) => ticket.Agent, {
+    onDelete: 'SET NULL',
+  })
+  Tickets: Ticket[];
 
   @CreateDateColumn()
   created_at: Date;

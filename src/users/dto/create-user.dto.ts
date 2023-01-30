@@ -1,8 +1,8 @@
 //todo I should have a better way to do this
-import { UserType } from '../../types';
+import { UserRole } from '../../common/types';
 
 export class CreateUserDto {
   username: string;
   password: string;
-  user_type: UserType;
+  role: UserRole;
 }

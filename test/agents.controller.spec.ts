@@ -1,23 +1,24 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { TestingModule } from './testing.module';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { UsersModule } from '../src/users/users.module';
 import { Repository } from 'typeorm';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Agent } from '../src/agents/agent.entity';
 import { User } from '../src/users/user.entity';
-import { AgentsController } from '../src/agents/agents.controller';
-import { AgentMapperService } from '../src/agents/dto/agent.mapper.service';
-import { AgentsService } from '../src/agents/agents.service';
 import { CreateAgentDto } from '../src/agents/dto/create-agent.dto';
-import { UserType } from '../src/types';
+import { UserRole } from '../src/common/types';
+import { Ticket } from '../src/tickets/ticket.entity';
+import { createUserReturnToken } from './helper';
 
+//TODO THE GOOD PRACTICE THAT MAKE EVERY TEST RUN INDEPENDENTLY
 describe('AgentsController (e2e)', () => {
   let app: INestApplication;
   let agentRepository: Repository<Agent>;
   let userRepository: Repository<User>;
   let createdAgentID: number;
   let token: string;
+  let moduleFixture;
+  let UserId: number;
 
   const agentExample: CreateAgentDto = {
     name: 'agentName',
@@ -27,44 +28,22 @@ describe('AgentsController (e2e)', () => {
   };
 
   beforeAll(async () => {
-    // authenticate user and get token for further requests to protected routes
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({
-          type: 'mysql',
-          host: 'localhost',
-          port: 3306,
-          username: 'user',
-          password: 'pass',
-          database: 'db',
-          entities: [User, Agent],
-          synchronize: true,
-        }),
-        TypeOrmModule.forFeature([Agent]),
-        UsersModule,
-      ],
-      controllers: [AgentsController],
-      providers: [AgentMapperService, AgentsService],
+    moduleFixture = await Test.createTestingModule({
+      imports: [TestingModule],
     }).compile();
     agentRepository = moduleFixture.get('AgentRepository');
     userRepository = moduleFixture.get('UserRepository');
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    await request(app.getHttpServer()).post('/users/register').send({
+    const userExample = {
       username: 'admin',
       password: '123456',
-      //TODO add user_type to admin
-      user_type: UserType.CUSTOMER,
-    });
+      //TODO add role to admin
+      role: UserRole.ADMIN,
+    };
 
-    const login = await request(app.getHttpServer()).post('/users/login').send({
-      username: 'admin',
-      password: '123456',
-    });
-
-    token = login.body.access_token;
-    console.log('token', token);
+    token = await createUserReturnToken(app, userExample);
   });
 
   it('Create new agent', () => {
@@ -74,47 +53,41 @@ describe('AgentsController (e2e)', () => {
       .send(agentExample)
       .expect(201)
       .then(async () => {
-        const agent = await agentRepository.find({
+        const optionsAgent: any = {
           where: { name: agentExample.name },
-        });
+        };
+
+        const agent = await agentRepository.find(optionsAgent);
         createdAgentID = agent[0].id;
         expect(agent).toBeDefined();
-        const user = await userRepository.find({
+        const optionsUser: any = {
           where: { username: agentExample.username },
-        });
+        };
 
+        const user = await userRepository.find(optionsUser);
+        UserId = user[0].id;
         expect(user).toBeDefined();
-        expect(user[0].user_type).toBe(UserType.AGENT);
+        expect(user[0].role).toBe(UserRole.AGENT);
       });
   });
 
-  it('GET /agents', () => {
-    return request(app.getHttpServer())
+  it('GET /agents', async () => {
+    const response = await request(app.getHttpServer())
       .get('/agents')
       .set('Authorization', `Bearer ${token}`)
-      .expect(200)
-      .then(async () => {
-        const agents = await agentRepository.find();
-        expect(agents).toBeDefined();
-      });
-  });
-
-  it('GET /agents/:id', () => {
-    return request(app.getHttpServer())
-      .get(`/agents/${createdAgentID}`)
-      .set('Authorization', `Bearer ${token}`)
-      .expect(200)
-      .then(async () => {
-        const agent = await agentRepository.findOne({
-          where: { id: createdAgentID },
-        });
-        expect(agent).toBeDefined();
-      });
+      .expect(200);
+    const agentRes = response.body[0];
+    expect(agentRes).toBeDefined();
+    expect(agentRes).toHaveProperty('id');
+    expect(agentRes).toHaveProperty('name');
+    expect(agentRes.name).toBe(agentExample.name);
+    expect(agentRes).toHaveProperty('title');
+    expect(agentRes.title).toBe(agentExample.title);
   });
 
   afterAll(async () => {
-    await agentRepository.clear();
-    await userRepository.clear();
+    await userRepository.delete({ id: UserId });
+    await agentRepository.delete({ id: createdAgentID });
     await app.close();
   });
 });

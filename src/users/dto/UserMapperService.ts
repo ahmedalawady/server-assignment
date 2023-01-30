@@ -12,7 +12,7 @@ export class UserMapperService {
     return {
       id: user.id,
       username: user.username,
-      user_type: user.user_type,
+      role: user.role,
       created_at: user.created_at,
     };
   }
@@ -21,7 +21,7 @@ export class UserMapperService {
     const user = new User();
     user.username = dto.username;
     user.password = await bcrypt.hash(dto.password, SALT);
-    user.user_type = dto.user_type;
+    user.role = dto.role;
     return user;
   }
 }

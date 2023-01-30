@@ -4,12 +4,14 @@ import {
   Get,
   UseGuards,
   Request,
+  HttpStatus,
   Body,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { AgentsService } from './agents.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateAgentDto } from './dto/create-agent.dto';
-import { AgentDto } from './dto/agent.dto';
 
 @Controller()
 export class AgentsController {
@@ -17,31 +19,37 @@ export class AgentsController {
 
   //@UseGuards(JwtAuthGuard)
   @Post('agents/create')
-  create(@Body() createAgentDto: CreateAgentDto): Promise<AgentDto> {
-    return this.agentsService.create(createAgentDto);
+  async create(@Body() createAgentDto: CreateAgentDto, @Res() res: Response) {
+    const agent = await this.agentsService.create(createAgentDto);
+    res.status(HttpStatus.CREATED).json(agent);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('agents')
-  findAll() {
-    return this.agentsService.findAll();
+  async findAll(@Res() res: Response) {
+    const agents = await this.agentsService.findAll();
+    res.status(HttpStatus.OK).json(agents);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('agents/:id')
-  findOne(@Request() req) {
-    return this.agentsService.findOne(req.params.id);
+  async findOne(@Request() req, @Res() res: Response) {
+    const agent = await this.agentsService.findOne(req.params.id);
+    res.status(HttpStatus.OK).json(agent);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('agents/update/:id')
-  update(@Request() req) {
-    return this.agentsService.update(req.params.id, req.body);
+  async update(@Request() req, @Res() res: Response) {
+    await this.agentsService.update(req.params.id, req.body);
+    //TODO: Return updated agent
+    res.status(HttpStatus.OK).json({ message: 'Agent Updated' });
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('agents/delete/:id')
-  delete(@Request() req) {
-    return this.agentsService.delete(req.params.id);
+  async delete(@Request() req, @Res() res: Response) {
+    await this.agentsService.delete(req.params.id);
+    res.status(HttpStatus.OK).json({ message: 'Agent Deleted' });
   }
 }

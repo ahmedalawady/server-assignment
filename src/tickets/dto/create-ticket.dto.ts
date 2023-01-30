@@ -1,13 +1,11 @@
-import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
-
+import { IsString, IsNotEmpty } from 'class-validator';
+//TODO I HAVE TO VALIDATE IF THE ORDER IS EXIST OR NOT AND IS BELONG TO THE CUSTOMER
 export class CreateTicketDto {
   @IsString()
   @IsNotEmpty()
-  subject: string;
+  order_number: string;
+
   @IsString()
   @IsNotEmpty()
-  description: string;
-  @IsString()
-  @IsNotEmpty()
-  product_id: string;
+  return_reason: string;
 }

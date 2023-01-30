@@ -1,8 +1,8 @@
-import { UserType } from '../../types';
+import { UserRole } from '../../common/types';
 
 export class UserDto {
   id: number;
   username: string;
-  user_type: UserType;
+  role: UserRole;
   created_at: Date;
 }

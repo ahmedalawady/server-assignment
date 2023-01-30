@@ -1,15 +1,15 @@
-import { TicketStatus } from '../../types';
+import { TicketStatus } from '../../common/types';
 
 export class TicketDto {
-  subject: string;
-  description: string;
+  id: number;
+  return_reason: string;
+  //Should be customer object
   customer_id: number;
-  product_id: string;
-  ticket_id: number;
+  order_number: string;
+  note?: string;
   agent?: {
     id: number;
     name: string;
-    title: string;
   };
   status: TicketStatus;
 }

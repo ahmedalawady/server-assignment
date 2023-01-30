@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { UserType } from '../types';
+import { UserRole } from '../common/types';
 
 @Entity()
 export class User {
@@ -18,8 +18,8 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: UserType, update: false })
-  user_type: UserType;
+  @Column({ type: 'enum', enum: UserRole, update: false })
+  role: UserRole;
 
   @CreateDateColumn()
   created_at: Date;

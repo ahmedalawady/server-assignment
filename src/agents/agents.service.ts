@@ -6,7 +6,7 @@ import { CreateAgentDto } from './dto/create-agent.dto';
 import { AgentDto } from './dto/agent.dto';
 import { UsersService } from '../users/users.service';
 import { AgentMapperService } from './dto/agent.mapper.service';
-import { UserType } from '../types';
+import { UserRole } from '../common/types';
 
 @Injectable()
 export class AgentsService {
@@ -21,7 +21,7 @@ export class AgentsService {
     const user = await this.userService.create({
       username: agent.username,
       password: agent.password,
-      user_type: UserType.AGENT,
+      role: UserRole.AGENT,
     });
 
     const agentData = await this.agentRepository.save({
@@ -29,20 +29,23 @@ export class AgentsService {
       title: agent.title,
       user_id: user.id,
     });
-    console.log('agentData', agentData);
     return this.mapperService.toDto(agentData);
   }
 
   //TODO handle pagination and filtering
   async findAll() {
     const agents = await this.agentRepository.find();
-    return agents.map(async (agent) => {
-      return await this.mapperService.toDto(agent);
+    return agents.map((agent) => {
+      return this.mapperService.toDto(agent);
     });
   }
 
   async findOne(id: number) {
     const agent = await this.agentRepository.findOne({ where: { id } });
+    if (!agent) {
+      //TODO throw custom exception
+      throw new Error('AGENT not found');
+    }
     return this.mapperService.toDto(agent);
   }
 
@@ -54,18 +57,23 @@ export class AgentsService {
       order: { available_at: 'ASC' },
     });
     if (!agent) {
-      return null;
+      throw new Error('AGENT not found');
     }
     agent.is_available = false;
-    await this.agentRepository.save(agent);
-    return this.mapperService.toDto(agent);
+    return await this.agentRepository.save(agent);
   }
 
   async markAgentAvailable(id: number) {
-    return await this.agentRepository.update(id, {
+    const updated = await this.agentRepository.update(id, {
       is_available: true,
       available_at: new Date(),
     });
+
+    if (updated.affected === 0) {
+      //TODO throw custom exception
+      throw new Error('Agent not found');
+    }
+    return true;
   }
 
   async update(id: number, agent: Agent): Promise<any> {

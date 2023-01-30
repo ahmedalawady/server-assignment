@@ -21,6 +21,8 @@ import { BullModule } from '@nestjs/bull';
       database: 'db',
       entities: [Ticket, User, Agent],
       synchronize: true,
+      migrations: ['dist/src/db/seeds/*.js'],
+      migrationsTableName: 'migrations', // I will use migrations as Seed scripts for my database tables
     }),
     BullModule.forRoot({
       redis: {
