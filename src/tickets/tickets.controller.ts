@@ -58,6 +58,6 @@ export class TicketsController {
     const { id, note } = body;
     const ticket = await this.ticketService.resolveTicket(id, note);
     await this.agentsService.markAgentAvailable(ticket.agent?.id);
-    res.status(HttpStatus.OK).json({ message: 'Ticket Resolved' });
+    res.status(HttpStatus.OK).json(ticket);
   }
 }

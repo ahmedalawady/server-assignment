@@ -1,0 +1,48 @@
+version: '2'
+services:
+  node:
+      tty: true
+      env_file:
+        - ./../.env
+      container_name: support-node
+      build:
+          context: ./../
+          dockerfile: ./docker/node/Dockerfile
+      ports:
+          - 4000:4000
+      volumes:
+          - ./../:/var/www
+      restart: on-failure
+
+  mysql:
+      env_file:
+        - ./../.env
+      image: mysql:5.7
+      build:
+        context: ./../
+        dockerfile: ./docker/mysql/Dockerfile
+        args:
+          MYSQL_DB_USER: ${DATABASE_USERNAME}
+          MYSQL_DB_PASSWORD: ${DATABASE_PASSWORD}
+          MYSQL_DB_NAME: ${DATABASE_NAME}
+      volumes:
+        - dbVolume:/var/lib/mysql
+      restart: on-failure
+      ports:
+          - 3306:3306
+  
+  redis:
+    image: 'redis:alpine'
+    restart: 'always'
+    expose:
+      - '6379'
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redisVolume:/data'
+
+volumes:
+  dbVolume:
+    driver: local
+  redisVolume:
+    driver: local

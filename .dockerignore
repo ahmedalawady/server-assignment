@@ -1,0 +1,55 @@
+##################################
+# Operating System specific files
+#################################
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+##############
+# Vendor files
+##############
+
+/**/node_modules
+/**/npm-debug.log
+
+###################
+# IDE Configuration
+###################
+
+# Jetbrains IDE
+/**/.idea
+*.iml
+
+# Netbeans
+/**/nbproject
+
+# Visual Studio Code
+/**/.vscode
+
+
+#######################
+# Version Control Files
+#######################
+
+/**/.git
+/**/.gitignore
+
+#####################
+# Application Files
+#####################
+
+dist/*
+/**/Dockerfile
+/**/docker-compose*.yml
+.dockerignore
+.env
+.env.example
+.editorconfig
+Makefile
+
+

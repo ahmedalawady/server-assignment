@@ -1,3 +1,4 @@
 export const jwtConstants = {
-  secret: 'customer-service-token',
+  secret: process.env.JWT_SECRET || 'customer-service-token',
+  expiration: process.env.JWT_EXPIRATION || '10h',
 };
