@@ -18,10 +18,19 @@ Before starting with system installation, the following are required
 3. pdate the values in the .env file (if needed).
 4. Run `make install` (For initial setup)
 6. Run the application `make run` (To run the containers)
-7. Run `make shell service=node cmd="npm run start:dev"`
-
+7. Run `make shell service=node cmd="npm run test"`
+8. Run `docker exec -it support-node bash`
+9. Run `npm run start:dev"`
+   
 Note: Seed data is not available, so testing must be done using Postman for creating Customers and Agents, and the front-end for creating, listing, and resolving tickets.
 
+### Test steps:
+- Create customer [Postman]
+- Create Agent [Postman]
+- Login as Customer [Frontend]
+- Create Ticket [Frontend]
+- Create as agent [Frontend]
+- Resolve Ticket [Frontend]
 ## Technical Details
 
 ### Technologies:
