@@ -21,8 +21,8 @@ import { ConfigModule } from '@nestjs/config';
         ? Number(process.env.DATABASE_PORT)
         : 3306,
       username: process.env.DATABASE_USERNAME || 'user',
-      password: process.env.DATABASE_PASSWORD || 'pass',
-      database: process.env.DATABASE_NAME || 'db',
+      password: process.env.DATABASE_PASSWORD || '123456789',
+      database: process.env.DATABASE_NAME || 'support',
       entities: [Ticket, User, Agent],
       synchronize: process.env.TYPEORM_SYNCHRONIZE == 'true' ? true : false,
       migrations: ['dist/src/db/seeds/*.js'],
