@@ -66,6 +66,7 @@ I used Monolithic Modular
 
 
 ### TODO:
+- Authorization
 - Validation "Specially the unique constrain and make sure order is belong to the customer"
 - Using config service
 - Implement filters in getTickets
