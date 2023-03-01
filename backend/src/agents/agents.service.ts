@@ -68,6 +68,7 @@ export class AgentsService {
       is_available: true,
       available_at: new Date(),
     });
+    -
 
     if (updated.affected === 0) {
       //TODO throw custom exception
