@@ -1,8 +1,8 @@
 # General Variables 
-variable "aws_region" {
+variable "region" {
   type        = string
-  description = "Region for AWS Resources"
-  default     = "us-east-1"
+  description = "Region for Google Cloud Resources"
+  default     = "us-central1"
 }
 
 variable "naming_prefix" {
@@ -41,15 +41,15 @@ variable "vpc_private_subnet_count" {
 
 
 # Instances Variables
-variable "instance_type" {
+variable "machine_type" {
   type        = map(string)
-  description = "Type for EC2 Instnace"
+  description = "Type for Google Cloud Instance"
 }
 
 # Database Variables
-variable "rds_instance_type" {
+variable "sql_instance_type" {
   type        = map(string)
-  description = "Type for RDS Instance"
+  description = "Type for Google Cloud SQL Instance"
 }
 
 variable "database_name" {
