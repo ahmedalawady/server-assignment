@@ -13,7 +13,7 @@ data "aws_availability_zones" "available" {}
 
 module "vpc" {
   source  = "terraform-google-modules/network/google"
-  version = "~> 3.0"
+  version = "<compatible_version>"
 
   project_id   = var.project_id
   network_name = var.network_name
@@ -24,6 +24,7 @@ module "vpc" {
       subnet_name   = "subnet-01"
       subnet_ip     = var.vpc_cidr_block[terraform.workspace]
       subnet_region = var.region
+      <additional_configurations>
     },
   ]
 
@@ -39,6 +40,7 @@ module "vpc" {
 resource "google_compute_firewall" "cs-nginx" {
   name    = "nginx"
   network = module.vpc.network_name
+  tags    = <original_tags>
 
   allow {
     protocol = "tcp"
