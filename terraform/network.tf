@@ -12,71 +12,52 @@ data "aws_availability_zones" "available" {}
 #Network
 
 module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-google-modules/network/google"
   version = "~> 3.0"
 
-  cidr            = var.vpc_cidr_block[terraform.workspace]
-  azs             = slice(data.aws_availability_zones.available.names, 0, (length(local.vpc_cidr_block)))
-  public_subnets  = slice(local.vpc_cidr_block, 0, (var.vpc_public_subnet_count[terraform.workspace]))
-  private_subnets = slice(local.vpc_cidr_block, (var.vpc_public_subnet_count[terraform.workspace]), (length(local.vpc_cidr_block)))
+  project_id   = var.project_id
+  network_name = var.network_name
+  routing_mode = "REGIONAL"
 
-  enable_nat_gateway      = false
-  enable_dns_hostnames    = var.enable_dns_hostnames
-  map_public_ip_on_launch = var.map_public_ip_on_launch
+  subnets = [
+    {
+      subnet_name   = "subnet-01"
+      subnet_ip     = var.vpc_cidr_block[terraform.workspace]
+      subnet_region = var.region
+    },
+  ]
 
-  tags = merge(local.common_tags, {
-    Name = "${local.name_prefix}-vpc"
-  })
-
+  secondary_ranges = {
+    subnet-01 = []
+  }
 }
 
 ##################################################################################
 # SECURITY
 ##################################################################################
 
-resource "aws_security_group" "cs-nginx" {
-  name        = "nginx"
-  description = "Allow HTTP traffic"
-  vpc_id      = module.vpc.vpc_id
+resource "google_compute_firewall" "cs-nginx" {
+  name    = "nginx"
+  network = module.vpc.network_name
 
-  ingress {
-    description = "HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
   }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = local.common_tags
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["nginx"]
 }
 
-resource "aws_security_group" "cs-db" {
-  name        = "cs-db"
-  description = "Allow MySQL traffic"
-  vpc_id      = module.vpc.vpc_id
+resource "google_compute_firewall" "cs-db" {
+  name    = "cs-db"
+  network = module.vpc.network_name
 
-  ingress {
-    description = "MySQL"
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  allow {
+    protocol = "tcp"
+    ports    = ["3306"]
   }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-
-  tags = local.common_tags
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["db"]
 }
