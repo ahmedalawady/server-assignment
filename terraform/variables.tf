@@ -1,10 +1,4 @@
 # General Variables 
-variable "aws_region" {
-  type        = string
-  description = "Region for AWS Resources"
-  default     = "us-east-1"
-}
-
 variable "naming_prefix" {
   type        = string
   description = "Naming prefix for resources"
@@ -17,26 +11,20 @@ variable "vpc_cidr_block" {
   description = "Base CIDR Block for VPC"
 }
 
-variable "enable_dns_hostnames" {
-  type        = bool
-  description = "Enable DNS hostnames in VPC"
-  default     = true
+variable "project_id" {
+  type        = string
+  description = "Project ID for Google Cloud Resources"
 }
 
-variable "map_public_ip_on_launch" {
-  type        = bool
-  description = "Map public IP on launch"
-  default     = true
+variable "network_name" {
+  type        = string
+  description = "Network name for Google Cloud VPC"
 }
 
-variable "vpc_public_subnet_count" {
-  type        = map(number)
-  description = "Number of public subnets to create"
-}
-
-variable "vpc_private_subnet_count" {
-  type        = map(number)
-  description = "Number of private subnets to create"
+variable "region" {
+  type        = string
+  description = "Region for Google Cloud Resources"
+  default     = "us-central1"
 }
 
 
